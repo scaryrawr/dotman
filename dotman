@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+function init() {
+    GIT_DIR="$HOME/.dotman/$1"
+    shift
+    git init --bare "$GIT_DIR" "$@"
+    git --git-dir="$GIT_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
+}
+
+function clone() {
+    REPO="$1"
+    GIT_DIR="$HOME/.dotman/$2"
+    git clone --bare "$REPO" "$GIT_DIR"
+    git --git-dir="$GIT_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
+}
+
+function list() {
+    ls "$HOME/.dotman"
+}
+
+function status() {
+    list | while read line; do
+        echo "Status for $line..."
+        git --git-dir="$HOME/.dotman/$line" --work-tree="$HOME" status "$@"
+    done
+}
+
+function diff() {
+    list | while read line; do
+        echo "Diff for $line..."
+        git --git-dir="$HOME/.dotman/$line" --work-tree="$HOME" diff "$@"
+    done
+}
+
+function git_forward() {
+    GIT_DIR="$HOME/.dotman/$1"
+    shift
+    git --git-dir="$GIT_DIR" --work-tree="$HOME" "$@"
+}
+
+function all() {
+    list | while read line; do
+        echo "Performing on $line..."
+        git --git-dir="$HOME/.dotman/$line" --work-tree="$HOME" "$@"
+    done
+}
+
+case "$1" in
+    --init)
+        [ -d "$HOME/.dotman" ] || mkdir "$HOME/.dotman"
+        shift
+        init "$@"
+        ;;
+    --clone)
+        [ -d "$HOME/.dotman" ] || mkdir "$HOME/.dotman"
+        shift
+        clone "$@"
+        ;;
+    --list)
+        list
+        ;;
+    --status)
+        shift
+        status "$@"
+        ;;
+    --diff)
+        shift
+        diff "$@"
+        ;;
+    --all)
+        shift
+        all "$@"
+        ;;
+    *)
+        git_forward "$@"
+        ;;
+esac
