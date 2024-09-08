@@ -46,28 +46,28 @@ function all() {
 }
 
 case "$1" in
-    --init)
+    init)
         [ -d "$HOME/.dotman" ] || mkdir "$HOME/.dotman"
         shift
         init "$@"
         ;;
-    --clone)
+    clone)
         [ -d "$HOME/.dotman" ] || mkdir "$HOME/.dotman"
         shift
         clone "$@"
         ;;
-    --list)
+    list)
         list
         ;;
-    --status)
+    status)
         shift
         status "$@"
         ;;
-    --diff)
+    diff)
         shift
         diff "$@"
         ;;
-    --all)
+    all)
         shift
         all "$@"
         ;;
