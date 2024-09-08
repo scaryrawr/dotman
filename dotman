@@ -10,8 +10,16 @@ function init() {
 function clone() {
     REPO="$1"
     GIT_DIR="$HOME/.dotman/$2"
-    git clone --bare "$REPO" "$GIT_DIR"
+    BACKUP_DIR="$HOME/.dotman-backup/$2"
+    shift 2
+    git clone --bare "$REPO" "$GIT_DIR" "$@"
     git --git-dir="$GIT_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
+    mkdir -p "$BACKUP_DIR"
+    git --git-dir=$HOME/.dotman/dotzsh/ --work-tree=$HOME checkout 2>&1 | awk '/^[[:space:]]+\./ {print $1}' | while read file; do
+        echo "Backing up $HOME/$file to $BACKUP_DIR..."
+        mv "$HOME/$file" "$BACKUP_DIR/"
+    done
+    git --git-dir=$HOME/.dotman/dotzsh/ --work-tree=$HOME checkout
 }
 
 function list() {
