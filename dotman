@@ -15,11 +15,11 @@ function clone() {
     git clone --bare "$REPO" "$GIT_DIR" "$@"
     git --git-dir="$GIT_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
     mkdir -p "$BACKUP_DIR"
-    git --git-dir=$HOME/.dotman/dotzsh/ --work-tree=$HOME checkout 2>&1 | awk '/^[[:space:]]+\./ {print $1}' | while read file; do
+    git --git-dir="$GIT_DIR" --work-tree=$HOME checkout 2>&1 | awk '/^[[:space:]]+\./ {print $1}' | while read file; do
         echo "Backing up $HOME/$file to $BACKUP_DIR..."
         mv "$HOME/$file" "$BACKUP_DIR/"
     done
-    git --git-dir=$HOME/.dotman/dotzsh/ --work-tree=$HOME checkout
+    git --git-dir="$GIT_DIR" --work-tree=$HOME checkout
 }
 
 function list() {
